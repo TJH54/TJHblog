@@ -1,3 +1,4 @@
+var CONTEXT_PATH = "/tjhblog";
 window.alert = function(message) {
 	if(!$(".alert-box").length) {
 		$("body").append(

@@ -1,7 +1,11 @@
 package com.tjh.newcoder.controller;
 
+import com.google.code.kaptcha.Producer;
+import com.sun.deploy.net.HttpResponse;
 import com.tjh.newcoder.entity.User;
 import com.tjh.newcoder.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -9,6 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+import javax.imageio.ImageIO;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Map;
 
 import static com.tjh.newcoder.util.CommunityConstant.ACTIVATION_FAILURE;
@@ -17,8 +27,11 @@ import static com.tjh.newcoder.util.CommunityConstant.ACTIVATION_SUCCESS;
 
 @Controller
 public class LoginController {
+    public final static Logger logger =LoggerFactory.getLogger(LoginController.class);
     @Autowired
     private UserService userService;
+    @Autowired
+    private Producer kaptchaProducer;
     //跳转注册页面
     @RequestMapping("/register")
     public String getRegisterPage(){
@@ -74,6 +87,26 @@ public class LoginController {
             model.addAttribute("target","/index");
         }
         return "/site/operate-result";
+
+    }
+
+    //生成验证码
+    @RequestMapping("/kaptcha")
+    public void getKaptcha(HttpServletResponse response, HttpSession session){
+        //生成验证码
+        String text = kaptchaProducer.createText();
+        BufferedImage image = kaptchaProducer.createImage(text);
+        //验证码存入session
+        session.setAttribute("kaptcha",text);
+        //图片输出给浏览器
+        response.setContentType("image/png");
+        try {
+            OutputStream os = response.getOutputStream();
+            ImageIO.write(image,"png",os);
+        } catch (IOException e) {
+            logger.error("验证码生成失败："+ e.getMessage());
+        }
+
 
     }
 
