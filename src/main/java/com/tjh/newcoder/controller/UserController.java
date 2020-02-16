@@ -1,6 +1,7 @@
 package com.tjh.newcoder.controller;
 
 
+import com.tjh.newcoder.annotation.LoginRequired;
 import com.tjh.newcoder.dao.UserMapper;
 import com.tjh.newcoder.entity.User;
 import com.tjh.newcoder.util.CommunityUtil;
@@ -41,12 +42,14 @@ public class UserController {
 
 
     //设置页面
+    @LoginRequired
     @RequestMapping("/setting")
     public String getSettingPage() {
         return "/site/setting";
     }
 
     //上传头像
+    @LoginRequired
     @RequestMapping(value = "/upload", method = RequestMethod.POST)
     public String upload(MultipartFile headerImage, Model model) {
         if (headerImage == null) {
@@ -89,7 +92,6 @@ public class UserController {
         filename = uploadPath + "/" + filename;
         //获取文件后缀
         String suffix = filename.substring(filename.lastIndexOf("."));
-        System.out.println(suffix);
         //相应指定格式图片
         response.setContentType("image/" + suffix);
         //文件流需要关闭 这样写自动关闭

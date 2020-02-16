@@ -1,6 +1,7 @@
 package com.tjh.newcoder.config;
 
 import com.tjh.newcoder.controller.intercepter.AlphaIntercepter;
+import com.tjh.newcoder.controller.intercepter.LoginRequiredIntercepter;
 import com.tjh.newcoder.controller.intercepter.LoginTicketIntercepter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -13,6 +14,8 @@ public class WebMvcConfig implements WebMvcConfigurer {
     private AlphaIntercepter alphaIntercepter;
     @Autowired
     private LoginTicketIntercepter loginTicketIntercepter;
+    @Autowired
+    private LoginRequiredIntercepter loginRequiredIntercepter;
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
@@ -20,6 +23,9 @@ public class WebMvcConfig implements WebMvcConfigurer {
                 .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg")
                 .addPathPatterns("/register");
         registry.addInterceptor(loginTicketIntercepter)
+                .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
+
+        registry.addInterceptor(loginRequiredIntercepter)
                 .excludePathPatterns("/**/*.css", "/**/*.js", "/**/*.png", "/**/*.jpg", "/**/*.jpeg");
 
     }
