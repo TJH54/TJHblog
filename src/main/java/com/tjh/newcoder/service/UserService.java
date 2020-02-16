@@ -106,7 +106,7 @@ public class UserService {
         }
     }
 
-    public Map<String, Object> login(String username, String password, int expired) {
+    public Map<String, Object> login(String username, String password, int expiredSeconds) {
         Map<String, Object> map = new HashMap<>();
         //判空
         if (StringUtils.isBlank(username)) {
@@ -134,24 +134,24 @@ public class UserService {
         loginTicket.setUserId(u.getId());
         loginTicket.setTicket(CommunityUtil.generateUUID());
         loginTicket.setStatus(0);
-        loginTicket.setExpired(new Date(System.currentTimeMillis() + expired));
+        loginTicket.setExpired(new Date(System.currentTimeMillis() + expiredSeconds * 1000));
         loginTicketMapper.insertTicket(loginTicket);
         //返回凭证用于controller发送cookie
         map.put("cookie", loginTicket.getTicket());
         return map;
     }
 
-    public void logout(String ticket){
+    public void logout(String ticket) {
         LoginTicket loginTicket = loginTicketMapper.selectByTicket(ticket);
-        loginTicketMapper.updateStatus(loginTicket.getUserId(),1);
+        loginTicketMapper.updateStatus(loginTicket.getUserId(), 1);
     }
 
-    public LoginTicket findLoginTicket(String ticket){
+    public LoginTicket findLoginTicket(String ticket) {
         LoginTicket loginTicket = loginTicketMapper.selectByTicket(ticket);
         return loginTicket;
     }
 
-    public User findById(int id){
+    public User findById(int id) {
         User user = userMapper.selectById(id);
         return user;
     }

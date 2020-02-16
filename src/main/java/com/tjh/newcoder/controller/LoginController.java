@@ -126,13 +126,13 @@ public class LoginController implements CommunityConstant {
             return "/site/login";
         }
 
-        int expired = rememberme?REMEMBER_EXPIRED_SECONDS:DEFAULT_EXPIRED_SECONDS;
+        int expiredSeconds = rememberme?REMEMBER_EXPIRED_SECONDS:DEFAULT_EXPIRED_SECONDS;
         //校验账户
-        Map<String,Object> map = userService.login(username,password,expired);
+        Map<String,Object> map = userService.login(username,password,expiredSeconds);
         if(map.get("cookie")!=null){
             Cookie cookie = new Cookie("ticket",map.get("cookie").toString());
             cookie.setPath(contextPath);
-            cookie.setMaxAge(expired);
+            cookie.setMaxAge(expiredSeconds);
             response.addCookie(cookie);
             return "redirect:/index";
         }
