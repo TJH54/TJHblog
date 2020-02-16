@@ -145,4 +145,14 @@ public class UserService {
         LoginTicket loginTicket = loginTicketMapper.selectByTicket(ticket);
         loginTicketMapper.updateStatus(loginTicket.getUserId(),1);
     }
+
+    public LoginTicket findLoginTicket(String ticket){
+        LoginTicket loginTicket = loginTicketMapper.selectByTicket(ticket);
+        return loginTicket;
+    }
+
+    public User findById(int id){
+        User user = userMapper.selectById(id);
+        return user;
+    }
 }
