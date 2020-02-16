@@ -121,7 +121,8 @@ public class UserService {
             map.put("usernameMsg", "用户不存在");
         }
         //判断账户密码是否匹配
-        if (!u.getPassword().equals(password)) {
+        String pwd = CommunityUtil.md5(password + u.getSalt());
+        if (!u.getPassword().equals(pwd)) {
             map.put("passwordMsg", "密码错误");
         }
         //判断账户是否激活
@@ -154,5 +155,15 @@ public class UserService {
     public User findById(int id) {
         User user = userMapper.selectById(id);
         return user;
+    }
+
+    public int updateHeader(int id, String headerUrl) {
+        return userMapper.updateHeader(id, headerUrl);
+    }
+
+    public int updatePassword(int id, String password) {
+        User user = userMapper.selectById(id);
+        String pwd = CommunityUtil.md5(password+user.getSalt());
+        return userMapper.updatePassword(id, pwd);
     }
 }

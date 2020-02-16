@@ -4,6 +4,7 @@ package com.tjh.newcoder.controller;
 import com.tjh.newcoder.annotation.LoginRequired;
 import com.tjh.newcoder.dao.UserMapper;
 import com.tjh.newcoder.entity.User;
+import com.tjh.newcoder.service.UserService;
 import com.tjh.newcoder.util.CommunityUtil;
 import com.tjh.newcoder.util.HostHolder;
 import org.apache.commons.lang3.StringUtils;
@@ -37,9 +38,9 @@ public class UserController {
 
     @Autowired
     private HostHolder hostHolder;
-    @Autowired
-    private UserMapper userMapper;
 
+    @Autowired
+    private UserService userService;
 
     //设置页面
     @LoginRequired
@@ -79,7 +80,7 @@ public class UserController {
         // http://localhost:8080/tjhblog/user/header/xxx.png
         User user = hostHolder.getUser();
         String url = domain + contextPath + "/user/header/" + fileName;
-        userMapper.updateHeader(user.getId(), url);
+        userService.updateHeader(user.getId(), url);
 
         return "redirect:/index";
     }
@@ -105,5 +106,25 @@ public class UserController {
         } catch (IOException e) {
             logger.error("读取头像失败: " + e.getMessage());
         }
+    }
+
+    //修改密码
+    @RequestMapping(value = "/updatePwd",method = RequestMethod.POST)
+    public String updatePwd(Model model, String oldPassword,String newPassword) {
+        //查询用户密码（原密码是否正确、新密码是否和原密码相同）
+        User user = hostHolder.getUser();
+        String oldpwd = CommunityUtil.md5(oldPassword+user.getSalt());
+        if(!oldpwd.equals(user.getPassword())){
+            model.addAttribute("oldpwdMsg", "原密码错误！");
+            return "/site/setting";
+        }
+        if (user.getPassword().equals(newPassword)) {
+            model.addAttribute("newpwdMsg", "用户密码和原密码相同！");
+            return "/site/setting";
+        }
+        //修改密码
+        userService.updatePassword(user.getId(), newPassword);
+        return "redirect:/index";
+
     }
 }
